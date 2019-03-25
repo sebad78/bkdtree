@@ -44,7 +44,7 @@ func (p Point) Compare(other datastructures.Comparable) int {
 			return int(p.Vals[dim] - rhs.Vals[dim])
 		}
 	}
-	return int(p.UserData.(uint64) - rhs.UserData.(uint64) )
+	return int(0)
 }
 
 func (p *Point) Inside(lowPoint, highPoint Point) (isInside bool) {
@@ -63,8 +63,7 @@ func (p Point) LessThan(rhs Point) (res bool) {
 			return p.Vals[dim] < rhs.Vals[dim]
 		}
 	}
-
-	return p.UserData.(uint64) < rhs.UserData.(uint64)
+	return false
 }
 
 func (p *Point) Equal(rhs Point) (res bool) {
@@ -97,7 +96,7 @@ func (p *Point) Encode(b []byte, bytesPerDim int) {
 			binary.BigEndian.PutUint64(b[8*i:], p.Vals[i])
 		}
 	}
-	binary.BigEndian.PutUint64(b[numDims*bytesPerDim:], p.UserData.(uint64))
+	//binary.BigEndian.PutUint64(b[numDims*bytesPerDim:], p.UserData.(uint64))
 	return
 }
 
@@ -115,7 +114,7 @@ func (p *Point) Decode(b []byte, numDims int, bytesPerDim int) {
 			p.Vals[i] = binary.BigEndian.Uint64(b[8*i:])
 		}
 	}
-	p.UserData = binary.BigEndian.Uint64(b[numDims*bytesPerDim:])
+	// p.UserData = binary.BigEndian.Uint64(b[numDims*bytesPerDim:])
 	return
 }
 
