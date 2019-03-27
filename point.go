@@ -2,15 +2,16 @@ package bkdtree
 
 import (
 	"encoding/binary"
-	"sort"
-
-	datastructures "github.com/deepfabric/go-datastructures"
+	"fmt"
+	"github.com/deepfabric/go-datastructures"
 	"github.com/keegancsmith/nth"
+	"sort"
+	"unsafe"
 )
 
 type Point struct {
 	Vals     []uint64
-	UserData interface{}
+	UserData unsafe.Pointer
 }
 
 type PointArray interface {
@@ -96,7 +97,11 @@ func (p *Point) Encode(b []byte, bytesPerDim int) {
 			binary.BigEndian.PutUint64(b[8*i:], p.Vals[i])
 		}
 	}
-	//binary.BigEndian.PutUint64(b[numDims*bytesPerDim:], p.UserData.(uint64))
+	ui := uintptr(p.UserData)
+	fmt.Println(ui)
+	ss := uint64(ui)
+	fmt.Println(ss)
+	binary.BigEndian.PutUint64(b[numDims*bytesPerDim:], ss)
 	return
 }
 
@@ -114,7 +119,9 @@ func (p *Point) Decode(b []byte, numDims int, bytesPerDim int) {
 			p.Vals[i] = binary.BigEndian.Uint64(b[8*i:])
 		}
 	}
-	// p.UserData = binary.BigEndian.Uint64(b[numDims*bytesPerDim:])
+	address := binary.BigEndian.Uint64(b[numDims*bytesPerDim:])
+	fmt.Println(uintptr(address))
+	p.UserData = unsafe.Pointer(uintptr(address))
 	return
 }
 
